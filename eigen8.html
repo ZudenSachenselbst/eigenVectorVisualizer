@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style> /* set the CSS */
+
+body { font: 12px Arial;}
+
+path { 
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+/*
+textarea {
+  resize: none;
+  width:40px; */
+  /* height:200px; */
+}
+*/
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr); /* Creates 2 equal-width columns */
+    grid-template-rows: repeat(1, 1fr); /* Creates 2 equal-height rows */
+    gap: 10px; /* Space between grid items */
+    max-width: 1000px;
+    /* margin: 0 auto; */
+}
+
+
+.matrix-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Creates 2 equal-width columns */
+    grid-template-rows: repeat(2, 1fr); /* Creates 2 equal-height rows */
+    gap: 10px; /* Space between grid items */
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.double-matrix-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Creates 2 equal-width columns */
+    grid-template-rows: repeat(1, 1fr); /* Creates 2 equal-height rows */
+    border: 2px solid #333; /* This adds a 2px solid dark gray border */
+    padding: 5px; 
+    gap: 5px; /* Space between grid items */
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+
+
+.labeled-matrix-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Creates 2 equal-width columns */
+    grid-template-rows: repeat(2, 1fr); /* Creates 2 equal-height rows */
+    gap: 10px; /* Space between grid items */
+    max-width: 2000px;
+    margin: 0 auto;
+}
+
+.vector-container {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr); /* Creates 2 equal-width columns */
+    grid-template-rows: repeat(2, 1fr); /* Creates 2 equal-height rows */
+    gap: 10px; /* Space between grid items */
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.fixed-width-input {
+  width: 60px; 
+  /* width: 10%; */ 
+  /* min-width: 100px; max-width: 200px; */ 
+}
+
+/*
+input[type="range"] {
+  width: 100%;
+}
+*/
+
+</style>
+<body>
+<svg width="0" height="0">
+  <defs>
+    <marker
+      id="arrow"
+      markerUnits="strokeWidth"
+      markerWidth="12"
+      markerHeight="12"
+      viewBox="0 0 12 12"
+      refX="6"
+      refY="6"
+      orient="auto">
+      <path d="M2,2 L10,6 L2,10 L6,6 L2,2" style="fill: #f00;"></path>
+    </marker>
+  </defs>
+ x
+
+<!-- <line x1="0" y1="0" x2="200" y2="50"  stroke="red" stroke-width="2" marker-end="url(#arrow)"/> -->
+
+<!-- <path d="M20,70 T80,100 T160,80 T200,90" fill="white" stroke="red" stroke-width="2" marker-start="url(#arrow)" marker-mid="url(#arrow)" marker-end="url(#arrow)"/> -->
+</svg>
+
+
+    <div class="grid-container">
+
+        <div id="option">
+            <input name="updateButton" 
+                   type="button" 
+                   value="Update" 
+                   onclick="myfunc0()" />
+        </div>
+        <label>matrix value</label>
+        <div class="matrix-container">
+            <textarea  id="value1" rows="1" cols="8" style="resize:none; width:60px" ></textarea>
+            <textarea  id="value2" rows="1" cols="8" style="resize:none; width:60px" ></textarea>
+            <textarea  id="value3" rows="1" cols="8" style="resize:none; width:60px" ></textarea>
+            <textarea  id="value4" rows="1" cols="8" style="resize:none; width:60px" ></textarea>
+        </div>
+        <div class="double-matrix-container">
+            <label>integer part</label>
+            <div class="matrix-container">
+                <input id="int1"  type="number" name="num" min="-10" max="10" step="1"  value=3 /> 
+                <input id="int2"  type="number" name="num" min="-10" max="10" step="1"  value=1 /> 
+                <input id="int3"  type="number" name="num" min="-10" max="10" step="1"  value=0 /> 
+                <input id="int4"  type="number" name="num" min="-10" max="10" step="1"  value=2 /> 
+            </div>
+            <label>float part</label>
+            <div class="matrix-container">
+                <input id="float1"  type="number" name="num" min="-1.0" max="1.0" step="0.1"  value=0.0 /> 
+                <input id="float2"  type="number" name="num" min="-1.0" max="1.0" step="0.1"  value=0.0 /> 
+                <input id="float3"  type="number" name="num" min="-1.0" max="1.0" step="0.1"  value=0.0 /> 
+                <input id="float4"  type="number" name="num" min="-1.0" max="1.0" step="0.1"  value=0.0 /> 
+            </div>
+        </div>
+
+        <label>eigen vector</label>
+        <div class="labeled-matrix-container">
+            <label>v1.x</label>
+            <textarea  id="ev1x" rows="1" cols="8" style="resize:none; width:80px" ></textarea>
+            <label>v1.y</label>
+            <textarea  id="ev1y" rows="1" cols="8" style="resize:none; width:80px" ></textarea>
+            <label>v2.x</label>
+            <textarea  id="ev2x" rows="1" cols="8" style="resize:none; width:80px" ></textarea>
+            <label>v2.y</label>
+            <textarea  id="ev2y" rows="1" cols="8" style="resize:none; width:80px" ></textarea>
+        </div>
+       
+        <label>eigen value</label>
+        <div class="vector-container">
+            <textarea  id="ev1" rows="1" cols="8" style="resize:none; width:40px" ></textarea>
+            <textarea  id="ev2" rows="1" cols="8" style="resize:none; width:40px" ></textarea>
+        </div>
+       
+        <label>imaginary eigen value</label>
+        <div class="vector-container">
+            <textarea  id="iev1" rows="1" cols="8" style="resize:none; width:40px" ></textarea>
+            <textarea  id="iev2" rows="1" cols="8" style="resize:none; width:40px" ></textarea>
+        </div>
+       
+
+
+        <div class="double-matrix-container">
+            <label>symmetric matrix</label>
+            <div class="matrix-container">
+                <input id="s1"  type="number" name="num"  step="0.1"  value=0.0 class="fixed-width-input" /> 
+                <input id="s2"  type="number" name="num"  step="0.1"  value=0.0 class="fixed-width-input" /> 
+                <input id="s3"  type="number" name="num"  step="0.1"  value=0.0 class="fixed-width-input" /> 
+                <input id="s4"  type="number" name="num"  step="0.1"  value=0.0 class="fixed-width-input" /> 
+            </div>
+            <label>asymmetric matrix</label>
+            <div class="matrix-container">
+                <input id="as1"  type="number" name="num"  step="0.1"  value=0.0 class="fixed-width-input" /> 
+                <input id="as2"  type="number" name="num"  step="0.1"  value=0.0 class="fixed-width-input" /> 
+                <input id="as3"  type="number" name="num"  step="0.1"  value=0.0 class="fixed-width-input" /> 
+                <input id="as4"  type="number" name="num"  step="0.1"  value=0.0 class="fixed-width-input" /> 
+            </div>
+        </div>
+
+
+    </div>
+
+<script>
+// 要素を取得
+const int1= document.getElementById('int1');
+const int2= document.getElementById('int2');
+const int3= document.getElementById('int3');
+const int4= document.getElementById('int4');
+
+const float1 = document.getElementById('float1');
+const float2 = document.getElementById('float2');
+const float3 = document.getElementById('float3');
+const float4 = document.getElementById('float4');
+
+const output1 = document.getElementById('value1');
+const output2 = document.getElementById('value2');
+const output3 = document.getElementById('value3');
+const output4 = document.getElementById('value4');
+
+
+const ev1x= document.getElementById('ev1x');
+const ev1y= document.getElementById('ev1y');
+const ev2x= document.getElementById('ev2x');
+const ev2y= document.getElementById('ev2y');
+
+const ev1= document.getElementById('ev1');
+const ev2= document.getElementById('ev2');
+const iev1= document.getElementById('iev1');
+const iev2= document.getElementById('iev2');
+
+
+const s1= document.getElementById('s1');
+const s2= document.getElementById('s2');
+const s3= document.getElementById('s3');
+const s4= document.getElementById('s4');
+const as1= document.getElementById('as1');
+const as2= document.getElementById('as2');
+const as3= document.getElementById('as3');
+const as4= document.getElementById('as4');
+
+
+
+
+output1.value = Number( parseInt(int1.value) + parseFloat(float1.value) ) ;
+output2.value = Number( parseInt(int2.value) + parseFloat(float2.value) ) ;
+output3.value = Number( parseInt(int3.value) + parseFloat(float3.value) ) ;
+output4.value = Number( parseInt(int4.value) + parseFloat(float4.value) ) ;
+
+
+
+// inputイベントを監視
+int1.addEventListener('input', function() {
+    output1.value = Number( parseInt(int1.value) + parseFloat(float1.value) ) ;
+    m2sm_asm();
+    myfunc0();
+});
+int2.addEventListener('input', function() {
+    output2.value = Number( parseInt(int2.value) + parseFloat(float2.value) ) ;
+    m2sm_asm();
+    myfunc0();
+});
+int3.addEventListener('input', function() {
+    output3.value = Number( parseInt(int3.value) + parseFloat(float3.value) ) ;
+    m2sm_asm();
+    myfunc0();
+});
+int4.addEventListener('input', function() {
+    output4.value = Number( parseInt(int4.value) + parseFloat(float4.value) ) ;
+    m2sm_asm();
+    myfunc0();
+});
+
+
+float1.addEventListener('input', function() {
+    output1.value = Number( parseInt(int1.value) + parseFloat(float1.value) ) ;
+    m2sm_asm();
+    myfunc0();
+});
+float2.addEventListener('input', function() {
+    output2.value = Number( parseInt(int2.value) + parseFloat(float2.value) ) ;
+    m2sm_asm();
+    myfunc0();
+});
+float3.addEventListener('input', function() {
+    output3.value = Number( parseInt(int3.value) + parseFloat(float3.value) ) ;
+    m2sm_asm();
+    myfunc0();
+});
+float4.addEventListener('input', function() {
+    output4.value = Number( parseInt(int4.value) + parseFloat(float4.value) ) ;
+    m2sm_asm();
+    myfunc0();
+});
+
+
+s1.addEventListener('input', function() {
+    // s4.value = Number( parseFloat(s1.value) ) ;
+    sm_asm2m();
+    myfunc0();
+});
+s2.addEventListener('input', function() {
+    s3.value = Number( parseFloat(s2.value) ) ;
+    sm_asm2m();
+    myfunc0();
+});
+s3.addEventListener('input', function() {
+    s2.value = Number( parseFloat(s3.value) ) ;
+    sm_asm2m();
+    myfunc0();
+});
+s4.addEventListener('input', function() {
+    // s1.value = Number( parseFloat(s4.value) ) ;
+    sm_asm2m();
+    myfunc0();
+});
+
+
+    as2.addEventListener('input', function() {
+    as3.value = Number( 0.0 - parseFloat(as2.value) ) ;
+    sm_asm2m();
+    myfunc0();
+});
+as3.addEventListener('input', function() {
+    as2.value = Number( 0.0 -  parseFloat(as3.value) ) ;
+    sm_asm2m();
+    myfunc0();
+});
+
+
+
+
+
+</script>
+
+
+<!-- load the d3.js library -->    
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ml-matrix"></script>
+
+<script> 
+// Assuming you have installed ml-matrix via npm: npm install ml-matrix
+// const { Matrix, EigenvalueDecomposition } = require('ml-matrix');
+//import { Matrix}  from "https://www.lactame.com/lib/ml/6.0.0/ml.min.js";
+//import EigenvalueDecomposition from 'ml-matrix';
+//    import {Matrix}  from "https://cdn.jsdelivr.net/npm/ml-matrix@6.12.1/matrix.umd.min.js"; 
+// Define your matrix
+
+function calcEV(){
+
+    console.log("entered calcEV");
+    
+const { Matrix, inverse } = mlMatrix; // Destructure if needed, or use mlMatrix.Matrix
+//const { EigenvalueDecomposition } = mlMatrix.EigenvalueDecomposition; 
+//import { EigenvalueDecomposition } from './ml-matrix.js';
+
+    var matrixData = [
+        [ parseFloat( output1.value),  parseFloat( output2.value)  ],
+        [ parseFloat( output3.value),  parseFloat( output4.value)  ]
+    ];
+
+    console.log("matrixData=", matrixData );
+
+const M = new Matrix(matrixData);
+
+// Perform Eigenvalue Decomposition
+//const eigen = new mlMatrix.EigenvalueDecomposition(M); 
+
+// Perform eigenvalue decomposition
+const e = new mlMatrix.EigenvalueDecomposition(M);
+
+// Access the results
+const realEigenvalues = e.realEigenvalues;
+const imaginaryEigenvalues = e.imaginaryEigenvalues;
+const eigenvectors = e.eigenvectorMatrix;
+
+// Print the results
+console.log("Original Matrix:");
+console.log(M.to2DArray());
+console.log("\nReal Eigenvalues:");
+console.log(realEigenvalues);
+console.log("\nImaginary Eigenvalues:");
+console.log(imaginaryEigenvalues);
+console.log("\nEigenvectors (rows):"); // The eigenvectorMatrix in ml-matrix has eigenvectors as rows
+// console.log(eigenvectors.to2DArray());
+var rows = eigenvectors.to2DArray(); 
+console.log(rows);
+
+        return (
+                {   "realEigenValues": realEigenvalues, 
+                    "imaginaryEigenvalues": imaginaryEigenvalues, 
+                    "eigenVectors": rows 
+                } );
+}
+calcEV();
+
+
+function m2sm_asm(){
+    console.log("entered m2sm_asm() ");
+
+    output1.value = Number( parseInt(int1.value) + parseFloat(float1.value) ) ;
+    output2.value = Number( parseInt(int2.value) + parseFloat(float2.value) ) ;
+    output3.value = Number( parseInt(int3.value) + parseFloat(float3.value) ) ;
+    output4.value = Number( parseInt(int4.value) + parseFloat(float4.value) ) ;
+
+    var m = [
+        [ parseFloat( output1.value),  parseFloat( output2.value)  ],
+        [ parseFloat( output3.value),  parseFloat( output4.value)  ]
+    ];
+    const { Matrix } = mlMatrix;
+
+    var M = new Matrix(m);
+    var M2 = new Matrix(m);
+    var TM = M.transpose();
+    var SM  = M.add(TM).div(2);
+    var ASM = M2.sub(TM).div(2);
+
+    var sm =  SM.to2DArray(); 
+    var asm = ASM.to2DArray(); 
+    console.log("sm=", sm);
+    console.log("asm=", asm);
+
+    s1.value = (sm[0][0]).toFixed(2);
+    s2.value = (sm[0][1]).toFixed(2);
+    s3.value = (sm[1][0]).toFixed(2);
+    s4.value = (sm[1][1]).toFixed(2);
+    as1.value = (asm[0][0]).toFixed(2);
+    as2.value = (asm[0][1]).toFixed(2);
+    as3.value = (asm[1][0]).toFixed(2);
+    as4.value = (asm[1][1]).toFixed(2);
+
+
+};
+
+
+function sm_asm2m(){ 
+
+    console.log("entered sm_asm2m() ");
+
+
+    var sm = [
+        [ parseFloat( s1.value),  parseFloat( s2.value)  ],
+        [ parseFloat( s3.value),  parseFloat( s4.value)  ]
+    ];
+    var asm = [
+        [ parseFloat( as1.value),  parseFloat( as2.value)  ],
+        [ parseFloat( as3.value),  parseFloat( as4.value)  ]
+    ];
+
+
+
+    const { Matrix } = mlMatrix;
+
+    var SM  = new Matrix(sm);
+    var ASM = new Matrix(asm);
+    SM.add(ASM); 
+    var m =  SM.to2DArray(); 
+
+    output1.value = (m[0][0]).toFixed(2);
+    output2.value = (m[0][1]).toFixed(2);
+    output3.value = (m[1][0]).toFixed(2);
+    output4.value = (m[1][1]).toFixed(2);
+
+
+};
+
+
+
+</script>
+
+
+
+
+<script>
+// Set the dimensions of the canvas / graph
+var margin = { top: 20, right: 20, bottom: 20, left: 20 },
+    width = 600 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
+
+// Set the ranges
+var x = d3.scale.linear().range([0, width]);
+var y = d3.scale.linear().range([height, 0]);
+
+// Define the axes
+var xAxis = d3.svg.axis().scale(x).orient('bottom').ticks(8);
+
+var yAxis = d3.svg.axis().scale(y).orient('left').ticks(8);
+
+// Define the line
+var valueline = d3.svg
+    .line()
+    .x(function (d) {
+        return x(d.datax);
+    })
+    .y(function (d) {
+        return y(d.datay);
+    });
+
+// Adds the svg canvas
+var svg = d3
+    .select('body')
+    .append('svg')
+    .attr('width', width + margin.left + margin.right)
+    .attr('height', height + margin.top + margin.bottom)
+    .append('g')
+    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+
+function myfunc0(){
+    console.log("entered myfunc0");
+
+
+    var result = calcEV();
+
+       
+        ev1x.value = (result.eigenVectors[0][0]).toFixed(2);
+        ev1y.value = (result.eigenVectors[0][1]).toFixed(2); 
+        ev2x.value = (result.eigenVectors[1][0]).toFixed(2); 
+        ev2y.value = (result.eigenVectors[1][1] ).toFixed(2); 
+        ev1.value  = (result.realEigenValues[0]).toFixed(2); 
+        ev2.value  = (result.realEigenValues[1]).toFixed(2); 
+        iev1.value = (result.imaginaryEigenvalues[0]).toFixed(2); 
+        iev2.value = (result.imaginaryEigenvalues[1]).toFixed(2); 
+
+
+
+
+/*
+    var data = [
+        { datax:  parseFloat( output1.value),  datay: parseFloat( output2.value)  },
+        { datax:  parseFloat( output3.value),  datay: parseFloat( output4.value)  }
+    ];
+*/
+    var data = [
+        { datax:  result.eigenVectors[0][0], datay:  result.eigenVectors[0][1] }, 
+        { datax:  result.eigenVectors[1][0], datay:  result.eigenVectors[1][1] } 
+    ];
+
+    var orgdata = [
+        { datax:  result.eigenVectors[0][0], datay:  result.eigenVectors[0][1] }, 
+        { datax:  result.eigenVectors[1][0], datay:  result.eigenVectors[1][1] } 
+    ];
+
+    console.log("orgdata=", orgdata);
+
+
+    d3.selectAll("path.line").remove();
+    svg.select('.x.axis').remove();
+    svg.select('.y.axis').remove();
+
+
+    data.sort(function (a, b) {
+        return d3.ascending(a.datax, b.datax);
+    });
+
+    var maxX = d3.max(data, function (d) {
+        return Math.abs(d.datax);
+    });
+    var maxY = d3.max(data, function (d) {
+        return Math.abs(d.datay);
+    });
+    // Scale the range of the data
+
+    //x.domain(d3.extent(data, function(d) { return d.datax; }));
+    //x.domain([-maxX, maxX]);
+    //y.domain([-maxY, maxY]);
+
+
+    var maxXY = (maxX > maxY) ? maxX : maxY;
+    x.domain([-maxXY, maxXY]);
+    y.domain([-maxXY, maxXY]);
+
+        // var svg = d3.select('body').transition();
+
+    /*
+    // Add the valueline path.
+    svg.append("path")
+        .attr("class", "line")
+        .attr("d", valueline(data));
+ */
+    orgdata.forEach(function (d) {
+        svg.append('path')
+            .attr('class', 'line')
+            .attr('d', valueline([{ datax: 0, datay: 0 }, d]))
+            .style("strole", "blue")
+            .attr("marker-end", "url(#arrow)");
+
+    });
+
+    // Add the X Axis
+    svg.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0,' + y(0) + ')')
+        .call(xAxis);
+
+    // Add the Y Axis
+    svg.append('g')
+        .attr('class', 'y axis')
+        .attr('transform', 'translate(' + x(0) + ',0)')
+        .call(yAxis);
+
+};
+myfunc0();
+
+
+</script>
+
+
+</body>
+</html>
+
