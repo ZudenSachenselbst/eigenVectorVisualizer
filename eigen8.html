@@ -77,6 +77,17 @@ textarea {
     margin: 0 auto;
 }
 
+.single-value-container {
+    display: grid;
+    justify-items: start;   /* layout grid elements to left */
+    grid-template-columns: repeat(2, 1fr); /* Creates 2 equal-width columns */
+    grid-template-rows: repeat(2, 1fr); /* Creates 2 equal-height rows */
+    gap: 10px; /* Space between grid items */
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+
 .fixed-width-input {
   width: 60px; 
   /* width: 10%; */ 
@@ -122,27 +133,29 @@ input[type="range"] {
                    onclick="myfunc0()" />
         </div>
         <label>matrix value</label>
-        <div class="matrix-container">
-            <textarea  id="value1" rows="1" cols="8" style="resize:none; width:60px" ></textarea>
-            <textarea  id="value2" rows="1" cols="8" style="resize:none; width:60px" ></textarea>
-            <textarea  id="value3" rows="1" cols="8" style="resize:none; width:60px" ></textarea>
-            <textarea  id="value4" rows="1" cols="8" style="resize:none; width:60px" ></textarea>
+        <div class="labeled-matrix-container">
+                <label>a</label>
+                <input id="value1"  type="number" name="num" min="-10.0" max="10.0" step="0.1"  value=1.0  style="resize:none; width:60px" />
+                <label>b</label>
+                <input id="value2"  type="number" name="num" min="-10.0" max="10.0" step="0.1"  value=1.0  style="resize:none; width:60px" />
+                <label>c</label>
+                <input id="value3"  type="number" name="num" min="-10.0" max="10.0" step="0.1"  value=0.0  style="resize:none; width:60px" />
+                <label>d</label>
+                <input id="value4"  type="number" name="num" min="-10.0" max="10.0" step="0.1"  value=2.0  style="resize:none; width:60px" />
+
         </div>
-        <div class="double-matrix-container">
-            <label>integer part</label>
-            <div class="matrix-container">
-                <input id="int1"  type="number" name="num" min="-10" max="10" step="1"  value=3 /> 
-                <input id="int2"  type="number" name="num" min="-10" max="10" step="1"  value=1 /> 
-                <input id="int3"  type="number" name="num" min="-10" max="10" step="1"  value=0 /> 
-                <input id="int4"  type="number" name="num" min="-10" max="10" step="1"  value=2 /> 
+
+
+        <div class="single-value-container">
+            <div>
+                <label>determinant</label>
+                <label>fixed</label>
+                <input id="fixed"  type="checkbox" /> 
             </div>
-            <label>float part</label>
-            <div class="matrix-container">
-                <input id="float1"  type="number" name="num" min="-1.0" max="1.0" step="0.1"  value=0.0 /> 
-                <input id="float2"  type="number" name="num" min="-1.0" max="1.0" step="0.1"  value=0.0 /> 
-                <input id="float3"  type="number" name="num" min="-1.0" max="1.0" step="0.1"  value=0.0 /> 
-                <input id="float4"  type="number" name="num" min="-1.0" max="1.0" step="0.1"  value=0.0 /> 
-            </div>
+            <textarea  id="determinant" rows="1" cols="8" style="resize:none; width:80px" ></textarea>
+            <label>trace</label>
+            <textarea  id="trace" rows="1" cols="8" style="resize:none; width:80px" ></textarea>
+            
         </div>
 
         <label>eigen vector</label>
@@ -193,15 +206,7 @@ input[type="range"] {
 
 <script>
 // 要素を取得
-const int1= document.getElementById('int1');
-const int2= document.getElementById('int2');
-const int3= document.getElementById('int3');
-const int4= document.getElementById('int4');
 
-const float1 = document.getElementById('float1');
-const float2 = document.getElementById('float2');
-const float3 = document.getElementById('float3');
-const float4 = document.getElementById('float4');
 
 const output1 = document.getElementById('value1');
 const output2 = document.getElementById('value2');
@@ -230,58 +235,75 @@ const as3= document.getElementById('as3');
 const as4= document.getElementById('as4');
 
 
+const fixed= document.getElementById('fixed');
+const determinant= document.getElementById('determinant');
+const trace= document.getElementById('trace');
 
-
-output1.value = Number( parseInt(int1.value) + parseFloat(float1.value) ) ;
-output2.value = Number( parseInt(int2.value) + parseFloat(float2.value) ) ;
-output3.value = Number( parseInt(int3.value) + parseFloat(float3.value) ) ;
-output4.value = Number( parseInt(int4.value) + parseFloat(float4.value) ) ;
+var previous_a = Number( parseFloat(output1.value ) )  ;
+var previous_b = Number( parseFloat(output2.value ) )  ;
+var previous_c = Number( parseFloat(output3.value ) )  ;
+var previous_d = Number( parseFloat(output4.value ) )  ;
+var previous_det   = (previous_a * previous_d ) - (previous_b * previous_c ) ; 
+var previous_bc    = previous_b * previous_c ; 
+var previous_trace = previous_a + previous_d ; 
 
 
 
 // inputイベントを監視
-int1.addEventListener('input', function() {
-    output1.value = Number( parseInt(int1.value) + parseFloat(float1.value) ) ;
+
+
+output1.addEventListener('input', function() {
+    var a = Number( parseFloat(output1.value ) )  ;
+
+    displayTraceDet();
     m2sm_asm();
     myfunc0();
+    previous_a = Number( parseFloat(output1.value ) )  ;
 });
-int2.addEventListener('input', function() {
-    output2.value = Number( parseInt(int2.value) + parseFloat(float2.value) ) ;
+output2.addEventListener('input', function() {
+    var b = Number( parseFloat(output2.value ) )  ;
+    var c = Number( parseFloat(output3.value ) )  ;
+
+    if( fixed.checked ){ 
+        // var c = ( previous_b * previous_c )  / b ;
+        var c = previous_bc / b ;
+        output3.value = c.toFixed(2);
+    } else {
+        previous_bc = b * c;
+    }
+
+    displayTraceDet();
     m2sm_asm();
     myfunc0();
+    previous_b = Number( parseFloat(output2.value ) )  ;
+    previous_c = Number( parseFloat(output3.value ) )  ;
 });
-int3.addEventListener('input', function() {
-    output3.value = Number( parseInt(int3.value) + parseFloat(float3.value) ) ;
+output3.addEventListener('input', function() {
+    var b = Number( parseFloat(output2.value ) )  ;
+    var c = Number( parseFloat(output3.value ) )  ;
+
+    if( fixed.checked ){ 
+        var b = previous_bc  / c ;
+        output2.value = b.toFixed(2);
+    } else {
+        previous_bc = b * c;
+    }
+
+    displayTraceDet();
     m2sm_asm();
     myfunc0();
+    previous_b = Number( parseFloat(output2.value ) )  ;
+    previous_c = Number( parseFloat(output3.value ) )  ;
 });
-int4.addEventListener('input', function() {
-    output4.value = Number( parseInt(int4.value) + parseFloat(float4.value) ) ;
+output4.addEventListener('input', function() {
+    var d = Number( parseFloat(output4.value ) )  ;
+    displayTraceDet();
     m2sm_asm();
     myfunc0();
+    previous_d = Number( parseFloat(output4.value ) )  ;
 });
 
 
-float1.addEventListener('input', function() {
-    output1.value = Number( parseInt(int1.value) + parseFloat(float1.value) ) ;
-    m2sm_asm();
-    myfunc0();
-});
-float2.addEventListener('input', function() {
-    output2.value = Number( parseInt(int2.value) + parseFloat(float2.value) ) ;
-    m2sm_asm();
-    myfunc0();
-});
-float3.addEventListener('input', function() {
-    output3.value = Number( parseInt(int3.value) + parseFloat(float3.value) ) ;
-    m2sm_asm();
-    myfunc0();
-});
-float4.addEventListener('input', function() {
-    output4.value = Number( parseInt(int4.value) + parseFloat(float4.value) ) ;
-    m2sm_asm();
-    myfunc0();
-});
 
 
 s1.addEventListener('input', function() {
@@ -336,6 +358,24 @@ as3.addEventListener('input', function() {
 //    import {Matrix}  from "https://cdn.jsdelivr.net/npm/ml-matrix@6.12.1/matrix.umd.min.js"; 
 // Define your matrix
 
+
+function adjustMatrixValue(){
+    var a = parseFloat( output1.value);
+}
+
+function displayTraceDet(){
+    var a = parseFloat( output1.value);
+    var b = parseFloat( output2.value);
+    var c = parseFloat( output3.value);
+    var d = parseFloat( output4.value);
+    var value_trace = a+d;
+    var value_det = (a * d) - (b * c) ;
+    determinant.value = value_det.toFixed(2);
+    trace.value = value_trace.toFixed(2);
+
+}
+
+
 function calcEV(){
 
     console.log("entered calcEV");
@@ -387,11 +427,6 @@ calcEV();
 
 function m2sm_asm(){
     console.log("entered m2sm_asm() ");
-
-    output1.value = Number( parseInt(int1.value) + parseFloat(float1.value) ) ;
-    output2.value = Number( parseInt(int2.value) + parseFloat(float2.value) ) ;
-    output3.value = Number( parseInt(int3.value) + parseFloat(float3.value) ) ;
-    output4.value = Number( parseInt(int4.value) + parseFloat(float4.value) ) ;
 
     var m = [
         [ parseFloat( output1.value),  parseFloat( output2.value)  ],
@@ -499,7 +534,8 @@ var svg = d3
 function myfunc0(){
     console.log("entered myfunc0");
 
-
+    displayTraceDet();
+    m2sm_asm();
     var result = calcEV();
 
        
