@@ -87,6 +87,58 @@ textarea {
     margin: 0 auto;
 }
 
+.layout {
+    display: flex;
+}
+.side-panel {
+    width: 220px;
+    padding: 10px;
+    border-right: 1px solid #ccc;
+    position: fixed;
+    top: 100px; /* place under header */
+    left: 0;
+    bottom: 0;
+    overflow: auto;
+}
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    padding: 10px;
+    background: #fff;
+    border-bottom: 1px solid #ccc;
+    /* overflow removed: header is fixed height, no scrolling needed */
+}
+}
+}
+.content {
+    /* Content area below header and to the right of side-panel */
+    /*  position: fixed; */
+    top: 120px; /* below fixed header */
+    left: 220px; /* to the right of fixed side-panel */
+    right: 0;
+    bottom: 0;
+    background: #fff;
+}
+.main {
+    /* Main wrapper containing header */
+    width: 100%;
+}
+
+#visualization {
+    /* D3 graph rendering area: centered in content pane */
+    /* display: flex; */
+    position: fixed;
+    top: 120px; /* below fixed header */
+    left: 240px; /* to the right of fixed side-panel */
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* fill content area completely */
+    width: 100%;
+}
+
 
 .fixed-width-input {
   width: 60px; 
@@ -124,7 +176,23 @@ input[type="range"] {
 </svg>
 
 
-    <div class="grid-container">
+    <div class="layout">
+        <div class="side-panel">
+            <div class="single-value-container">
+                <div>
+                    <label>determinant</label></br>
+                    <label>
+                        <input id="fixed"  type="checkbox" > 
+                        fixed
+                    </label>
+                </div>
+                <textarea  id="determinant" rows="1" cols="8" style="resize:none; width:60px" ></textarea>
+                <label>trace</label>
+                <textarea  id="trace" rows="1" cols="8" style="resize:none; width:60px" ></textarea>
+            </div>
+        </div>
+        <div class="main">
+        <div class="header"><div class="grid-container">
 
         <div id="option">
             <input name="updateButton" 
@@ -146,28 +214,18 @@ input[type="range"] {
         </div>
 
 
-        <div class="single-value-container">
-            <div>
-                <label>determinant</label>
-                <label>fixed</label>
-                <input id="fixed"  type="checkbox" /> 
-            </div>
-            <textarea  id="determinant" rows="1" cols="8" style="resize:none; width:80px" ></textarea>
-            <label>trace</label>
-            <textarea  id="trace" rows="1" cols="8" style="resize:none; width:80px" ></textarea>
-            
-        </div>
+        
 
         <label>eigen vector</label>
         <div class="labeled-matrix-container">
             <label>v1.x</label>
-            <textarea  id="ev1x" rows="1" cols="8" style="resize:none; width:80px" ></textarea>
+            <textarea  id="ev1x" rows="1" cols="8" style="resize:none; width:60px" ></textarea>
             <label>v1.y</label>
-            <textarea  id="ev1y" rows="1" cols="8" style="resize:none; width:80px" ></textarea>
+            <textarea  id="ev1y" rows="1" cols="8" style="resize:none; width:60px" ></textarea>
             <label>v2.x</label>
-            <textarea  id="ev2x" rows="1" cols="8" style="resize:none; width:80px" ></textarea>
+            <textarea  id="ev2x" rows="1" cols="8" style="resize:none; width:60px" ></textarea>
             <label>v2.y</label>
-            <textarea  id="ev2y" rows="1" cols="8" style="resize:none; width:80px" ></textarea>
+            <textarea  id="ev2y" rows="1" cols="8" style="resize:none; width:60px" ></textarea>
         </div>
        
         <label>eigen value</label>
@@ -200,12 +258,15 @@ input[type="range"] {
                 <input id="as4"  type="number" name="num"  step="0.1"  value=0.0 class="fixed-width-input" /> 
             </div>
         </div>
-
-
+        </div>
+        <div class="content">
+            <div id="visualization"></div>
+        </div>
+        </div>
     </div>
 
 <script>
-// —v‘f‚ðŽæ“¾
+// ï¿½vï¿½fï¿½ï¿½ï¿½æ“¾
 
 
 const output1 = document.getElementById('value1');
@@ -249,7 +310,7 @@ var previous_trace = previous_a + previous_d ;
 
 
 
-// inputƒCƒxƒ“ƒg‚ðŠÄŽ‹
+// inputï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ÄŽï¿½
 
 
 output1.addEventListener('input', function() {
@@ -497,10 +558,24 @@ function sm_asm2m(){
 
 
 <script>
-// Set the dimensions of the canvas / graph
-var margin = { top: 20, right: 20, bottom: 20, left: 20 },
-    width = 600 - margin.left - margin.right,
-    height = 600 - margin.top - margin.bottom;
+// Get the visualization container element from the DOM
+var visualizationContainer = document.getElementById('visualization');
+
+// Calculate SVG dimensions based on container size
+// Get the actual width and height of the visualization pane
+var containerWidth = visualizationContainer.clientWidth;
+var containerHeight = visualizationContainer.clientHeight;
+
+// Define margins for the graph area inside the SVG
+var margin = { top: 20, right: 20, bottom: 20, left: 20 };
+
+// Calculate the drawable area size (subtract margins and padding from container)
+// Use the smaller of width or height to maintain a fixed 1:1 aspect ratio (square graph)
+var availableWidth = Math.max(700, containerWidth - margin.left - margin.right - 40);  // minimum: 300px
+var availableHeight = Math.max(700, containerHeight - margin.top - margin.bottom - 40); // minimum: 300px (adjusted for new header height)
+var graphSize = Math.min(availableWidth, availableHeight); // use smaller dimension for square aspect ratio
+var width = graphSize;   // width and height are equal: square graph
+var height = graphSize;  // maintains 1:1 aspect ratio
 
 // Set the ranges
 var x = d3.scale.linear().range([0, width]);
@@ -521,14 +596,15 @@ var valueline = d3.svg
         return y(d.datay);
     });
 
-// Adds the svg canvas
+// Adds the svg canvas inside the main visualization container
+// Size the SVG to fit within the container (includes margins)
 var svg = d3
-    .select('body')
+    .select('#visualization')
     .append('svg')
-    .attr('width', width + margin.left + margin.right)
-    .attr('height', height + margin.top + margin.bottom)
+    .attr('width', width + margin.left + margin.right)  // total width including margins
+    .attr('height', height + margin.top + margin.bottom) // total height including margins
     .append('g')
-    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')'); // offset inner group by margin
 
 
 function myfunc0(){
